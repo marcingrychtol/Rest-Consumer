@@ -9,8 +9,8 @@ public interface AddressContainer {
 
     String POST_TRANSACTION =  "http://localhost:8080/sim/transaction"; // consumes Json of TransactionDto
 
-    String POST_WALLET =  "http://localhost:8080/sim/wallets"; // creates one wallet
+    String POST_WALLET =  "http://localhost:8080/sim/wallet"; // creates one wallet
 
-    String POST_WALLETS =  "http://localhost:8080/sim/wallets/"/*{int}*/; // specify path variable for adding number of wallets
+    String POST_WALLETS =  "http://localhost:8080/sim/wallet/"/*{int}*/; // specify path variable for adding number of wallets
 
 }

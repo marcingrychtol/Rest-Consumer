@@ -6,11 +6,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.swing.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @NoArgsConstructor
@@ -19,37 +18,30 @@ public class RESTConsumerService {
     @Autowired
     private RESTConsumer restConsumer;
     private final Map<Integer, WalletDto> walletMap = new HashMap<>();
-    private boolean walletAdded = true;
-
-    public RESTConsumerService(RESTConsumer restConsumer) {
-        this.restConsumer = restConsumer;
-    }
 
     public void run() {
         TransactionDto transactionDto;
+        Set<TransactionDto> transactionHistory = new HashSet<>();
 
         while(true) {
-            if (walletAdded) {
-                instantiateWalletMap(); // sets walletAdded to false every time wallet map is instantiated
-            }
-
+            instantiateWalletMap(); // each time, because balance changes every time
             transactionDto = generateRandomTransaction();
             if (transactionDto == null){  // if there is not enough wallets
-                addWallet();  // sets walletAdded to true every time wallet was added
+                restConsumer.postWallets();
                 continue;
             }
-
             restConsumer.postTransaction(transactionDto);
+            transactionHistory.add(transactionDto);
 
             if (Math.random()*10 >= 9){  // approximately 10% of luck
-                addWallet();
+                restConsumer.postWallets();
             }
 
-            try {
-                wait(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                wait(3000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -60,16 +52,19 @@ public class RESTConsumerService {
         }
 
         // walczy aż znajdzie portfel o niezerowej sumie
-        int senderIteration;
-        float value;
+        int senderIteration = 0;
+        float value = 0;
+        int nullBallanceCounter = 0;
         do {
+            nullBallanceCounter++;
+            if (nullBallanceCounter == mapSize){ return null; }
             senderIteration = (int) (Math.random() * mapSize);
             value = walletMap.get(senderIteration).getBalance();
         }while (value == 0);
         WalletDto senderWallet = walletMap.get(senderIteration);
 
         // walczy aż znajdzie różne portfele
-        int receiverIteration;
+        int receiverIteration = 0;
         do{
             receiverIteration = (int) (Math.random()*mapSize);
         }while(senderIteration==receiverIteration);
@@ -87,17 +82,14 @@ public class RESTConsumerService {
     private void instantiateWalletMap() {
         int i = 0;
         walletMap.clear();
+        Set<WalletDto> walletSet = restConsumer.getAllWallets();
         for (WalletDto wallet:
-                restConsumer.getAllWallets()
+                walletSet
         ) {
             walletMap.put(i,wallet);
             i++;
         }
-        walletAdded = false;
     }
 
-    private void addWallet(){
-        restConsumer.postWallets();
-        walletAdded=true;
-    }
+
 }

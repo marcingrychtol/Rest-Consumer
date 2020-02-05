@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDto {
     private String sender;
-    private String receiver;
+    private String reciever;
     private Float value;
 }
