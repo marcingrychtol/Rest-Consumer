@@ -2,6 +2,8 @@ package com.gryfny.bcsimulator.client.rest;
 
 import com.gryfny.bcsimulator.client.dto.TransactionDto;
 import com.gryfny.bcsimulator.client.dto.WalletDto;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
@@ -11,29 +13,49 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@NoArgsConstructor
 public class RESTConsumerService {
 
+    @Autowired
     private RESTConsumer restConsumer;
     private final Map<Integer, WalletDto> walletMap = new HashMap<>();
+    private boolean walletAdded = true;
 
     public RESTConsumerService(RESTConsumer restConsumer) {
         this.restConsumer = restConsumer;
     }
 
     public void run() {
-        instantiateWalletMap();
+        TransactionDto transactionDto;
+
         while(true) {
-            TransactionDto transactionDto = generateRandomTransaction();
-            if (transactionDto == null){
-                return;
+            if (walletAdded) {
+                instantiateWalletMap(); // sets walletAdded to false every time wallet map is instantiated
             }
 
+            transactionDto = generateRandomTransaction();
+            if (transactionDto == null){  // if there is not enough wallets
+                addWallet();  // sets walletAdded to true every time wallet was added
+                continue;
+            }
+
+            restConsumer.postTransaction(transactionDto);
+
+            if (Math.random()*10 >= 9){  // approximately 10% of luck
+                addWallet();
+            }
+
+            try {
+                wait(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private TransactionDto generateRandomTransaction() {
         int mapSize = walletMap.size();
-        if (mapSize == 0){
+        if (mapSize <= 1){ // only if there is not enough wallets
             return null;
         }
 
@@ -62,14 +84,20 @@ public class RESTConsumerService {
         );
     }
 
-
     private void instantiateWalletMap() {
         int i = 0;
+        walletMap.clear();
         for (WalletDto wallet:
                 restConsumer.getAllWallets()
         ) {
             walletMap.put(i,wallet);
             i++;
         }
+        walletAdded = false;
+    }
+
+    private void addWallet(){
+        restConsumer.postWallets();
+        walletAdded=true;
     }
 }
