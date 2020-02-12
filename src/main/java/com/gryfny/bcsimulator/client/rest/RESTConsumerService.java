@@ -37,11 +37,11 @@ public class RESTConsumerService {
                 restConsumer.postWallets();
             }
 
-//            try {
-//                wait(3000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            try {
+               Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
