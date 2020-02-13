@@ -1,10 +1,12 @@
-package com.gryfny.bcsimulator.client.rest;
+package com.gryfny.bcsimulator.client.service;
 
 import com.gryfny.bcsimulator.client.dto.TransactionDto;
 import com.gryfny.bcsimulator.client.dto.WalletDto;
+import com.gryfny.bcsimulator.client.rest.RESTConsumer;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +21,7 @@ public class RESTConsumerService {
     private RESTConsumer restConsumer;
     private final Map<Integer, WalletDto> walletMap = new HashMap<>();
 
-    public void run() {
+    public void run() throws ResourceAccessException {
         TransactionDto transactionDto;
         Set<TransactionDto> transactionHistory = new HashSet<>();
 
@@ -79,7 +81,7 @@ public class RESTConsumerService {
         );
     }
 
-    private void instantiateWalletMap() {
+    private void instantiateWalletMap() throws ResourceAccessException {
         int i = 0;
         walletMap.clear();
         Set<WalletDto> walletSet = restConsumer.getAllWallets();

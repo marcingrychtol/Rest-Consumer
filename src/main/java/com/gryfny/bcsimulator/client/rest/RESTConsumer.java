@@ -34,18 +34,17 @@ public class RESTConsumer {
         return response.getBody();
     }
 
-    public void postTransaction(TransactionDto transaction){
+    public void postTransaction(TransactionDto transaction) {
         restTemplate.postForLocation(AddressContainer.POST_TRANSACTION, transaction);
     }
 
-    public void postWallets(){
-        restTemplate.postForLocation(AddressContainer.POST_WALLET,null);
+    public void postWallets() {
+        restTemplate.postForLocation(AddressContainer.POST_WALLET, null);
     }
 
-    public void postWallets(int i){
-        restTemplate.postForLocation(AddressContainer.POST_WALLETS+i,null);
+    public void postWallets(int i) {
+        restTemplate.postForLocation(AddressContainer.POST_WALLETS + i, null);
     }
-
 
 
 }

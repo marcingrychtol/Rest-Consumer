@@ -1,7 +1,7 @@
 package com.gryfny.bcsimulator.client.configuration;
 
 import com.gryfny.bcsimulator.client.rest.RESTConsumer;
-import com.gryfny.bcsimulator.client.rest.RESTConsumerService;
+import com.gryfny.bcsimulator.client.service.RESTConsumerService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;

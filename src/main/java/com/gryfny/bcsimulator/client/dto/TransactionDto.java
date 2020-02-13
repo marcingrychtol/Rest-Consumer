@@ -15,6 +15,6 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class TransactionDto {
     private String sender;
-    private String reciever;
+    private String receiver;
     private Float value;
 }
