@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Component
@@ -16,5 +18,5 @@ import org.springframework.stereotype.Component;
 public class TransactionDto {
     private String sender;
     private String receiver;
-    private Float value;
+    private BigDecimal value;
 }

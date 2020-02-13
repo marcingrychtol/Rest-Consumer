@@ -21,8 +21,12 @@ public class BcsimulatorApplication {
             try {
                 restConsumerService.run();
             } catch (ResourceAccessException e) {
-                Thread.sleep(3000);
-                LOG.info("Node inactive. Waiting for connection...");
+                int reconnectTime = 5;
+                LOG.warn("Node inactive. Waiting for connection...");
+                for (int i = reconnectTime; i >0 ; i--) {
+                    LOG.warn("...reconnect in "+i+"s");
+                    Thread.sleep(1000);
+                }
             }
         }
     }

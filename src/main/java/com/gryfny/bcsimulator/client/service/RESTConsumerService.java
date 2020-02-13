@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,6 +33,7 @@ public class RESTConsumerService {
                 restConsumer.postWallets();
                 continue;
             }
+
             restConsumer.postTransaction(transactionDto);
             transactionHistory.add(transactionDto);
 
@@ -39,11 +41,7 @@ public class RESTConsumerService {
                 restConsumer.postWallets();
             }
 
-            try {
-               Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            randomWait();
         }
     }
 
@@ -55,14 +53,14 @@ public class RESTConsumerService {
 
         // walczy aż znajdzie portfel o niezerowej sumie
         int senderIteration = 0;
-        float value = 0;
+        BigDecimal value = BigDecimal.ZERO;
         int nullBallanceCounter = 0;
         do {
             nullBallanceCounter++;
             if (nullBallanceCounter == mapSize){ return null; }
             senderIteration = (int) (Math.random() * mapSize);
             value = walletMap.get(senderIteration).getBalance();
-        }while (value == 0);
+        }while (value.compareTo(BigDecimal.ZERO) == 0);
         WalletDto senderWallet = walletMap.get(senderIteration);
 
         // walczy aż znajdzie różne portfele
@@ -72,7 +70,7 @@ public class RESTConsumerService {
         }while(senderIteration==receiverIteration);
         WalletDto receiverWallet = walletMap.get(receiverIteration);
 
-        value = (float) (Math.random()*value); // wybiera losową kwotę płatności z zakresu portfela
+        value = BigDecimal.valueOf(Math.random()*value.doubleValue()); // wybiera losową kwotę płatności z zakresu portfela
 
         return new TransactionDto(
                 senderWallet.getPublicKey(),
@@ -90,6 +88,14 @@ public class RESTConsumerService {
         ) {
             walletMap.put(i,wallet);
             i++;
+        }
+    }
+
+    void randomWait(){
+        try {
+            Thread.sleep((long) (Math.random()*6000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Component
@@ -15,5 +17,5 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class WalletDto {
     private String publicKey;
-    private float balance;
+    private BigDecimal balance;
 }
